@@ -1,7 +1,7 @@
 ### Description
 
-This repository contains an example of an erc-20 token with a tax charged  
-for using the transfer function. The tax in the form of tokens goes to  
+This repository contains an example of an erc-20 token with a fee charged  
+for using the transfer function. The fee in the form of tokens goes to  
 the wallet specified by the owner.  
 The classic implementation of the token has been changed, all added  
 functions are commented to improve understanding of their work.  
