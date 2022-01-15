@@ -28,10 +28,10 @@ which are listed in the 'package.json' file (for example, coverage (```yarn add 
 
 ### Deploying contract
 
-```npx hardhat run scripts/01_deploy_FeeToken``` 
+```npx hardhat run scripts/01_deploy_FeeToken.js``` 
 --network `<your network>`
 
 ### Verify a contract
 
-```npx hardhat run scripts/01_verify_FeeToken``` 
+```npx hardhat run scripts/01_verify_FeeToken.js``` 
 --network `<your network>`
