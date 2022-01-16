@@ -9,60 +9,88 @@ const {
 describe('feeTokenTest', () => {
   beforeEach(async () => {
     [deployer, ownerTokens, wallet, addr1, addr2] = await ethers.getSigners();
-    const feeTokenInstance = await ethers.getContractFactory('FeeToken');
-    feeToken = await feeTokenInstance.deploy(ownerTokens.address, wallet.address, 
-    process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL, process.env.TOTAL_SUPPLY);
   });
+  describe("Testing constructor", () => {
+    it('should set right constructor parametres', async () => {
+      const feeTokenInstance = await ethers.getContractFactory('FeeToken');
+      feeToken = await feeTokenInstance.deploy(ownerTokens.address, wallet.address, 
+      process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL, process.env.TOTAL_SUPPLY);
 
-  it('should transfer', async () => {
-    let amount = await BigNumber.from("100000");
-    let fee = 25;
-    let denom = 10000;
-    let taxFee = amount.mul(fee).div(denom);
-    let net = amount.sub(taxFee);
+      const [walletAfterDeploy, name, symbol] = await Promise.all([
+        feeToken.wallet(),
+        feeToken.name(),
+        feeToken.symbol(),
+      ]);
 
-    const startOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
-    const startWalletBalance = await feeToken.balanceOf(wallet.address);
-    const startRecipientBalance = await feeToken.balanceOf(addr1.address);
+      const endingOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
+      
+      const fee = await feeToken.fee();
+      const denom = await feeToken.denom();
 
-    await feeToken.connect(ownerTokens).transfer(addr1.address, amount);
-
-    const endingOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
-    const endingWalletBalance = await feeToken.balanceOf(wallet.address);
-    const endingRecipientBalance = await feeToken.balanceOf(addr1.address);
-
-    expect(startOwnerTokensBalance.sub(amount)).to.equal(endingOwnerTokensBalance);
-    expect(startWalletBalance.add(taxFee)).to.equal(endingWalletBalance);
-    expect(startRecipientBalance.add(net)).to.equal(endingRecipientBalance);
+      expect(walletAfterDeploy).to.be.equal(wallet.address);
+      expect(name).to.be.equal(process.env.TOKEN_NAME);
+      expect(symbol).to.be.equal(process.env.TOKEN_SYMBOL);
+      expect(endingOwnerTokensBalance).to.equal(process.env.TOTAL_SUPPLY);
+      expect(fee).to.equal(25);
+      expect(denom).to.equal(10000);
+    });
   });
+  describe("Other tests", () => {
+    beforeEach(async () => {
+      const feeTokenInstance = await ethers.getContractFactory('FeeToken');
+      feeToken = await feeTokenInstance.deploy(ownerTokens.address, wallet.address, 
+      process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL, BigNumber.from(process.env.TOTAL_SUPPLY));
+    });
+    it('should transfer', async () => {
+      let amount = await BigNumber.from("100000");
+      let fee = 25;
+      let denom = 10000;
+      let taxFee = amount.mul(fee).div(denom);
+      let net = amount.sub(taxFee);
 
-  it('should set a new fee', async () => {
-    const oldFee = await feeToken.fee();
-    const newFee = 21;
+      const startOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
+      const startWalletBalance = await feeToken.balanceOf(wallet.address);
+      const startRecipientBalance = await feeToken.balanceOf(addr1.address);
 
-    const tx = await feeToken._setFee(newFee);
-    const endingFee = await feeToken.fee();
+      await feeToken.connect(ownerTokens).transfer(addr1.address, amount);
 
-    expect(newFee).to.equal(endingFee);
-    expect(tx).to.emit(feeToken, "NewFee").withArgs(oldFee, endingFee);
-  });
+      const endingOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
+      const endingWalletBalance = await feeToken.balanceOf(wallet.address);
+      const endingRecipientBalance = await feeToken.balanceOf(addr1.address);
 
-  it('should failed if the specified fee is more than the previous one', async () => {
-    const newFee = 50;
+      expect(startOwnerTokensBalance.sub(amount)).to.equal(endingOwnerTokensBalance);
+      expect(startWalletBalance.add(taxFee)).to.equal(endingWalletBalance);
+      expect(startRecipientBalance.add(net)).to.equal(endingRecipientBalance);
+    });
 
-    await expect(
-      feeToken._setFee(newFee),
-    ).to.be.revertedWith('FeeToken::_setFee: the specified fee is more than the previous one');
-  });
+    it('should set a new fee', async () => {
+      const oldFee = await feeToken.fee();
+      const newFee = 21;
 
-  it('should set a new wallet', async () => {
-    [newWallet] = await ethers.getSigners();
-    const oldWallet = await feeToken.wallet();
+      const tx = await feeToken._setFee(newFee);
+      const endingFee = await feeToken.fee();
 
-    const tx = await feeToken._setWallet(newWallet.address);
-    const endingWallet = await feeToken.wallet();
+      expect(newFee).to.equal(endingFee);
+      expect(tx).to.emit(feeToken, "NewFee").withArgs(oldFee, endingFee);
+    });
 
-    expect(newWallet.address).to.equal(endingWallet);
-    expect(tx).to.emit(feeToken, "NewWallet").withArgs(oldWallet, endingWallet);
+    it('should failed if the specified fee is more than the previous one', async () => {
+      const newFee = 50;
+
+      await expect(
+        feeToken._setFee(newFee),
+      ).to.be.revertedWith('FeeToken::_setFee: the specified fee is more than the previous one');
+    });
+
+    it('should set a new wallet', async () => {
+      [newWallet] = await ethers.getSigners();
+      const oldWallet = await feeToken.wallet();
+
+      const tx = await feeToken._setWallet(newWallet.address);
+      const endingWallet = await feeToken.wallet();
+
+      expect(newWallet.address).to.equal(endingWallet);
+      expect(tx).to.emit(feeToken, "NewWallet").withArgs(oldWallet, endingWallet);
+    });
   });
 });
