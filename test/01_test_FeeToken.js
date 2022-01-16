@@ -5,14 +5,28 @@ const {
     BigNumber,
   },
 } = require("hardhat");
+const { constants } = require("@openzeppelin/test-helpers");
 
-describe('feeTokenTest', () => {
+/*describe('Testing the operation of emit during deploy', () => {
+  it('should emit wallet address', async () => {
+    [ownerTokens, wallet] = await ethers.getSigners();
+    const feeTokenInstance = await ethers.getContractFactory('FeeToken');
+    feeToken = await feeTokenInstance.deploy(ownerTokens.address, wallet.address, 
+    process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL);
+    const tx = feeToken;
+
+    expect(tx).to.emit(tx, "NewFee").withArgs(constants.ZERO_ADDRESS, wallet.address);
+  });
+});*/
+
+describe('Other tests', () => {
   beforeEach(async () => {
     [deployer, ownerTokens, wallet, addr1, addr2] = await ethers.getSigners();
     const feeTokenInstance = await ethers.getContractFactory('FeeToken');
     feeToken = await feeTokenInstance.deploy(ownerTokens.address, wallet.address, 
     process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL);
   });
+
   it('should transfer', async () => {
     await feeToken.connect(ownerTokens).transfer(addr1.address, 100000);
     await feeToken.connect(addr1).transfer(addr2.address, 10000);
@@ -30,22 +44,14 @@ describe('feeTokenTest', () => {
   });
 
   it('should set a new fee', async () => {
-    const newFee = 21;
-
-    await feeToken._setFee(newFee);
-
-    const endingFee = await feeToken.fee();
-
-    expect(newFee).to.equal(endingFee);
-  });
-
-  it('should emit a new fee', async () => {
     const oldFee = await feeToken.fee();
     const newFee = 21;
 
-    await expect(feeToken._setFee(newFee))
-      .to.emit(feeToken, "NewFee")
-      .withArgs(oldFee, newFee);
+    const tx = await feeToken._setFee(newFee);
+    const endingFee = await feeToken.fee();
+
+    expect(newFee).to.equal(endingFee);
+    expect(tx).to.emit(feeToken, "NewFee").withArgs(oldFee, endingFee);
   });
 
   it('should failed if the specified fee is more than the previous one', async () => {
@@ -58,20 +64,12 @@ describe('feeTokenTest', () => {
 
   it('should set a new wallet', async () => {
     [newWallet] = await ethers.getSigners();
+    const oldWallet = await feeToken.wallet();
 
-    await feeToken._setWallet(newWallet.address);
-
+    const tx = await feeToken._setWallet(newWallet.address);
     const endingWallet = await feeToken.wallet();
 
     expect(newWallet.address).to.equal(endingWallet);
+    expect(tx).to.emit(feeToken, "NewWallet").withArgs(oldWallet, endingWallet);
   });
-
-  it('should emit a new wallet', async () => {
-    [newWallet] = await ethers.getSigners();
-    const oldWallet = await feeToken.wallet();
-
-    await expect(feeToken._setWallet(newWallet.address))
-      .to.emit(feeToken, "NewWallet")
-      .withArgs(oldWallet, newWallet.address);
-  });
-});
+});*/
