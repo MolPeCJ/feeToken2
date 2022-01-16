@@ -33,5 +33,5 @@ which are listed in the 'package.json' file (for example, coverage (```yarn add 
 
 ### Verify a contract
 
-```npx hardhat run scripts/01_verify_FeeToken.js``` 
+```npx hardhat run scripts/02_verify_FeeToken.js``` 
 --network `<your network>`

@@ -17,14 +17,14 @@ contract FeeToken is ERC20, Ownable {
     event NewWallet(address oldWallet, address newWallet);
 
     constructor(
-        address account,
+        address account_,
         address wallet_,
         string memory name_,
         string memory symbol_
     ) ERC20(name_, symbol_) {
         wallet = wallet_;
 
-        _mint(account, 12884901889e18);
+        _mint(account_, 12884901889e18);
 
         emit NewWallet(address(0), wallet);
     }
@@ -34,6 +34,7 @@ contract FeeToken is ERC20, Ownable {
     /// @return The bool value.
 
     function _setFee(uint256 newFee_) external onlyOwner returns (bool) {
+        require(newFee_ < fee, 'FeeToken::_setFee: the specified fee is more than the previous one');
         uint256 oldFee = fee;
         fee = newFee_;
 
