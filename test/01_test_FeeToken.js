@@ -11,7 +11,7 @@ describe('feeTokenTest', () => {
     [deployer, ownerTokens, wallet, addr1, addr2] = await ethers.getSigners();
     const feeTokenInstance = await ethers.getContractFactory('FeeToken');
     feeToken = await feeTokenInstance.deploy(ownerTokens.address, wallet.address, 
-    process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL);
+    process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL, process.env.TOTAL_SUPPLY);
   });
 
   it('should transfer', async () => {

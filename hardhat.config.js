@@ -9,11 +9,11 @@ module.exports = {
   solidity: "0.8.11",
   networks: {
     mainnet: {
-      url: process.env.RPC_NODE_URL_MAINNET,
+      url: process.env.BSC_MAINNET_URL,
       accounts: [process.env.PRIVATE_KEY]
     },
     bsctestnet: {
-      url: process.env.RPC_NODE_URL_BSCTESTNET,
+      url: process.env.BSC_TESTNET_URL,
       accounts: [process.env.PRIVATE_KEY]
     },
   },
