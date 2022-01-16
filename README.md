@@ -20,11 +20,11 @@ which are listed in the 'package.json' file (for example, coverage (```yarn add 
 
 ### Compilation
 
-```npx hardhat compile```
+```yarn hardhat compile```
 
 ### Run tests and coverage 
 
-```npx hardhat coverage```
+```yarn hardhat coverage```
 
 ### Deploying contract
 
