@@ -25,7 +25,7 @@ describe('feeTokenTest', () => {
     const startWalletBalance = await feeToken.balanceOf(wallet.address);
     const startRecipientBalance = await feeToken.balanceOf(addr1.address);
 
-    let tx = await feeToken.connect(ownerTokens).transfer(addr1.address, amount);
+    await feeToken.connect(ownerTokens).transfer(addr1.address, amount);
 
     const endingOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
     const endingWalletBalance = await feeToken.balanceOf(wallet.address);
