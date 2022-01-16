@@ -61,7 +61,7 @@ contract FeeToken is ERC20, Ownable {
     /// @param recipient Address of the token recipient.
     /// @param amount Number of tokens to transfer.
 
-    function _transfer(
+    /*function _transfer(
         address sender,
         address recipient,
         uint256 amount
@@ -71,5 +71,5 @@ contract FeeToken is ERC20, Ownable {
 
         super._transfer(sender, recipient, net);
         super._transfer(sender, wallet, taxFee);
-    }
+    }*/
 }
