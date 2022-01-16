@@ -9,7 +9,8 @@ async function main() {
   try {
     await hre.run('verify:verify', {
       address: data.feeToken,
-      constructorArguments: [process.env.OWNER_TOKENS, process.env.WALLET, process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL],
+      constructorArguments: [process.env.OWNER_TOKENS, process.env.WALLET, 
+      process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL, process.env.TOTAL_SUPPLY],
       contract: 'contracts/FeeToken.sol:FeeToken',
     });
   } catch (e) {

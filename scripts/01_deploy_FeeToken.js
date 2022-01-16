@@ -7,7 +7,7 @@ async function main() {
 
   const feeTokenInstance = await ethers.getContractFactory('FeeToken');
   const feeToken = await feeTokenInstance.deploy(process.env.OWNER_TOKENS, process.env.WALLET,
-  process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL);
+  process.env.TOKEN_NAME, process.env.TOKEN_SYMBOL, process.env.TOTAL_SUPPLY);
 
   console.log('Network', network);
   console.log('Deploying contracts with the account:', deployer.address);
