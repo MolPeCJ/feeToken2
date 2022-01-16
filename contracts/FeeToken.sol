@@ -32,7 +32,6 @@ contract FeeToken is ERC20, Ownable {
     /// @notice The function sets the new fee percent.
     /// @param newFee_ The fee value.
     /// @return The bool value.
-
     function _setFee(uint256 newFee_) external onlyOwner returns (bool) {
         require(newFee_ < fee, 'FeeToken::_setFee: the specified fee is more than the previous one');
         uint256 oldFee = fee;
@@ -60,7 +59,6 @@ contract FeeToken is ERC20, Ownable {
     /// @param sender The address of the token sender.
     /// @param recipient Address of the token recipient.
     /// @param amount Number of tokens to transfer.
-
     function _transfer(
         address sender,
         address recipient,

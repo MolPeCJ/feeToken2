@@ -15,19 +15,25 @@ describe('feeTokenTest', () => {
   });
 
   it('should transfer', async () => {
-    await feeToken.connect(ownerTokens).transfer(addr1.address, 100000);
-    await feeToken.connect(addr1).transfer(addr2.address, 10000);
+    let amount = await BigNumber.from("100000");
+    let fee = 25;
+    let denom = 10000;
+    let taxFee = amount.mul(fee).div(denom);
+    let net = amount.sub(taxFee);
 
-    const totalSupply = await BigNumber.from("12884901888999999999999900000");
+    const startOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
+    const startWalletBalance = await feeToken.balanceOf(wallet.address);
+    const startRecipientBalance = await feeToken.balanceOf(addr1.address);
+
+    let tx = await feeToken.connect(ownerTokens).transfer(addr1.address, amount);
+
     const endingOwnerTokensBalance = await feeToken.balanceOf(ownerTokens.address);
     const endingWalletBalance = await feeToken.balanceOf(wallet.address);
-    const endingSenderBalance = await feeToken.balanceOf(addr1.address);
-    const endingRecipientBalance = await feeToken.balanceOf(addr2.address);
+    const endingRecipientBalance = await feeToken.balanceOf(addr1.address);
 
-    expect(totalSupply).to.equal(endingOwnerTokensBalance);
-    expect(275).to.equal(endingWalletBalance);
-    expect(89750).to.equal(endingSenderBalance);
-    expect(9975).to.equal(endingRecipientBalance);
+    expect(startOwnerTokensBalance.sub(amount)).to.equal(endingOwnerTokensBalance);
+    expect(startWalletBalance.add(taxFee)).to.equal(endingWalletBalance);
+    expect(startRecipientBalance.add(net)).to.equal(endingRecipientBalance);
   });
 
   it('should set a new fee', async () => {
